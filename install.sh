@@ -64,7 +64,7 @@ echo "    address 192.168.42.1" >> $x
 echo "    netmask 255.255.255.0" >> $x
 echo "    wireless-power off" >> $x
 echo "" >> $x
-echo "iface default inet dhcp" >> $x
+echo "iface default inet manual" >> $x
 echo "up iptables-restore < /etc/iptables.ipv4.nat" >> $x
 sudo chmod --reference==/etc/network/interfaces $x
 sudo chown --reference=/etc/network/interfaces $x
