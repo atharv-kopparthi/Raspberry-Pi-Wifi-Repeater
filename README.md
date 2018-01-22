@@ -1,7 +1,7 @@
 
 # RPI3_HOTSPOTS
 Features:
- - Tested on Raspbian Jessy
+ - Tested on Raspbian Jessy, Stretch
  - Can install while wlan0 is connected to network.
  - easy to switch betwwen stattion mode and hotspot mode.
  - can share internet between eth0 and wlan0, can be config to share with wlan1 or ...
