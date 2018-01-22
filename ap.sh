@@ -23,6 +23,7 @@ sudo sed -i -e "s/\(ignore_broadcast_ssid=\).*/\1$dd/" /etc/hostapd/hostapd.conf
 sudo /etc/init.d/hostapd stop
 sudo /etc/init.d/udhcpd stop
 sudo /etc/init.d/dnsmasq stop
+sudo service dhcpcd stop
 sudo ifdown wlan0
 sudo ifconfig wlan0 down
 sudo rm -rf /etc/network/interfaces
@@ -32,6 +33,6 @@ sudo ifup wlan0
 sudo /etc/init.d/hostapd restart
 sudo /etc/init.d/udhcpd restart
 sudo /etc/init.d/dnsmasq restart
-sudo service hostapd status
-sudo service udhcpd status
-sudo service dnsmasq status
+#sudo service hostapd status
+#sudo service udhcpd status
+#sudo service dnsmasq status

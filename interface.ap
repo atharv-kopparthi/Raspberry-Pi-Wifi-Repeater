@@ -10,5 +10,5 @@ iface wlan0 inet static
     netmask 255.255.255.0
     wireless-power off
 
-iface default inet dhcp
+iface default inet manual
 up iptables-restore < /etc/iptables.ipv4.nat
