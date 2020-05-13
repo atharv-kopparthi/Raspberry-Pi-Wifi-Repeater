@@ -10,13 +10,13 @@ touch $x
 sudo rm -rf /etc/default/udhcpd
 sudo mkdir /etc/default
 sudo touch /etc/default/udhcpd
-echo "start 192.168.42.2 " >>   $x
-echo "end 192.168.42.20" >> $x
+echo "start 10.0.0.2 " >>   $x
+echo "end 10.0.0.254" >> $x
 echo "interface wlan0" >> $x
 echo "remaining yes" >> $x
 echo "opt dns 8.8.8.8 4.2.2.2" >> $x
 echo "opt subnet 255.255.255.0" >> $x
-echo "opt router 192.168.42.1" >> $x
+echo "opt router 10.0.0.1" >> $x
 echo "opt lease 864000" >> $x
 sudo mv  $x /etc/udhcpd.conf
 touch $x
@@ -65,21 +65,20 @@ echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" >> $x
 sudo mv $x /etc/default/hostapd
 
 touch $x
-sudo sh -c "echo 1 >> /proc/sys/net/ipv4/ip_forward"
+sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
-sudo sh -c "iptables-save >> /etc/iptables.ipv4.nat"
+sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 #------------------------------5. Fire it up! R----------------------------------------
 #sudo service hostapd start
 #sudo service udhcpd start
 #-----------------------------6.get the hotspot to start on boot----------------------
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
-sudo update-rc.d hostapd enable
-sudo update-rc.d udhcpd enable
-sudo update-rc.d dnsmasq enable
+sudo update-rc.d hostapd enable -f
+sudo update-rc.d udhcpd enable -f
 #------------------------Create wifiConnect.py------------------------------------
 sudo apt-get install dnsmasq -y
 # sudo apt-get install udhcpc -y

@@ -1,10 +1,10 @@
 #! /bin/bash
+WLAN_IF="interface wlan0"
+WLAN_IP="static ip_address=10.0.0.1"
 if [ -z "$1" ] && [ -z "$2" ]
 # No ssid, no pass
 then
   echo "Connect using current information"
-  sudo rm -rf /etc/network/interfaces
-  sudo cp /etc/network/interfaces.sta /etc/network/interfaces
 else
 # have ssid, no pass
   if !([ -z "$1"  ]) && [ -z "$2" ] ; then
@@ -25,12 +25,24 @@ else
   fi
 fi
 
-sudo /etc/init.d/hostapd stop &
-sudo /etc/init.d/udhcpd stop &
-# sudo /etc/init.d/dnsmasq stop &&
-sudo /etc/init.d/dhcpcd stop &
+sudo sed -i "/${WLAN_IF}/d" /etc/dhcpcd.conf
+sudo sed -i "/${WLAN_IP}/d" /etc/dhcpcd.conf
 
+sudo service wpa_supplicant stop
+sudo service hostapd stop
+sudo service udhcpd stop
+sudo service dhcpcd stop
+sudo killall -9 wpa_supplicant
+sudo killall -9 udhcpd
+
+sudo ifconfig wlan0 up
 sudo ip addr flush dev wlan0
-sudo rm -rf /etc/network/interfaces
-sudo cp /etc/network/interfaces.sta /etc/network/interfaces
-sudo /etc/init.d/dhcpcd start
+sudo service wpa_supplicant restart
+sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlan0 &
+sudo service dhcpcd start
+
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+sudo update-rc.d hostapd disable
+sudo update-rc.d udhcpd disable
+sudo update-rc.d dhcpcd enable
