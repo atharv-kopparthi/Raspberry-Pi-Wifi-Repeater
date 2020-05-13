@@ -1,5 +1,5 @@
 #! /bin/bash
-if [ -z "$1" ] && [ -z "$2" ] 
+if [ -z "$1" ] && [ -z "$2" ]
 # No ssid, no pass
 then
   echo "Connect using current information"
@@ -25,14 +25,12 @@ else
   fi
 fi
 
-sudo /etc/init.d/hostapd stop &&
-sudo /etc/init.d/udhcpd stop &&
-sudo /etc/init.d/dnsmasq stop &&
-sudo /etc/init.d/dhcpcd stop &&
+sudo /etc/init.d/hostapd stop &
+sudo /etc/init.d/udhcpd stop &
+# sudo /etc/init.d/dnsmasq stop &&
+sudo /etc/init.d/dhcpcd stop &
 
-sudo ip addr flush dev wlan0 &&
+sudo ip addr flush dev wlan0
 sudo rm -rf /etc/network/interfaces
 sudo cp /etc/network/interfaces.sta /etc/network/interfaces
-
-sudo /etc/init.d/dhcpcd start 
-sudo /etc/init.d/dnsmasq start 
+sudo /etc/init.d/dhcpcd start
