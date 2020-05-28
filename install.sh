@@ -1,9 +1,9 @@
 #1. Install the necessary software------------------------------
-sudo apt-get update
+sudo apt-get update -y
 sudo apt-get install hostapd udhcpd -y
 sudo apt-get install iptables -y
 #sudo apt-get install zip unzip -y
-sudo apt-get update
+sudo apt-get update -y
 #2. Configure DHCP----------------------------------------------
 x=tem.tem
 touch $x
@@ -20,7 +20,7 @@ echo "opt router 10.0.0.1" >> $x
 echo "opt lease 864000" >> $x
 sudo mv  $x /etc/udhcpd.conf
 touch $x
-echo  "# Comment the following line to enable" >> $x
+echo "# Comment the following line to enable" >> $x
 echo "#DHCPD_ENABLED=\"no\"" >> $x
 echo "# Options to pass to busybox' udhcpd." >> $x
 echo "# -S    Log to syslog" >> $x
@@ -65,29 +65,13 @@ echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" >> $x
 sudo mv $x /etc/default/hostapd
 
 touch $x
+sudo sed -i "/net.ipv4.ip_forward=/d" /etc/sysctl.conf
 sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
-sudo echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+sudo sh -c "echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf"
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-#------------------------------5. Fire it up! R----------------------------------------
-#sudo service hostapd start
-#sudo service udhcpd start
-#-----------------------------6.get the hotspot to start on boot----------------------
-sudo systemctl unmask hostapd
-sudo systemctl enable hostapd
-sudo update-rc.d hostapd enable -f
-sudo update-rc.d udhcpd enable -f
-#------------------------Create wifiConnect.py------------------------------------
-sudo apt-get install dnsmasq -y
-# sudo apt-get install udhcpc -y
+
 sudo cp ap.sh /usr/bin/ap
 sudo cp sta.sh /usr/bin/sta
-
-sudo chmod --reference==/etc/network/interfaces interface.ap
-udo chown --reference=/etc/network/interfaces interface.ap
-sudo cp interface.ap  /etc/network/interfaces.ap
-sudo chmod --reference==/etc/network/interfaces interface.sta
-sudo chown --reference=/etc/network/interfaces interface.sta
-sudo cp interface.sta  /etc/network/interfaces.sta

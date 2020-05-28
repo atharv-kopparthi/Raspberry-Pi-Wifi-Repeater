@@ -24,6 +24,7 @@ else
 	sudo sed -i -e "s/\(key_mgmt=\).*/\1$c/" /etc/wpa_supplicant/wpa_supplicant.conf
   fi
 fi
+sudo iptables -t nat -F POSTROUTING
 
 sudo sed -i "/${WLAN_IF}/d" /etc/dhcpcd.conf
 sudo sed -i "/${WLAN_IP}/d" /etc/dhcpcd.conf
@@ -41,8 +42,6 @@ sudo service wpa_supplicant restart
 sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlan0 &
 sudo service dhcpcd start
 
-sudo systemctl unmask hostapd
-sudo systemctl enable hostapd
 sudo update-rc.d hostapd disable
 sudo update-rc.d udhcpd disable
 sudo update-rc.d dhcpcd enable
