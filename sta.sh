@@ -25,6 +25,7 @@ else
   fi
 fi
 sudo iptables -t nat -F POSTROUTING
+sudo iptables -F FORWARD
 
 sudo sed -i "/${WLAN_IF}/d" /etc/dhcpcd.conf
 sudo sed -i "/${WLAN_IP}/d" /etc/dhcpcd.conf
