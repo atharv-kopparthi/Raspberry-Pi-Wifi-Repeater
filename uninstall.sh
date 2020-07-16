@@ -8,6 +8,8 @@ sudo killall -9 udhcpd
 sudo killall -9 hostapd
 sudo killall -9 dhcpcd
 sudo killall -9 wpa_supplicant
+sudo rm -rf /etc/default/udhcpd
+sudo rm -rf /etc/udhcpd.conf
 
 sudo ifconfig wlan0 up
 sudo ip addr flush dev wlan0

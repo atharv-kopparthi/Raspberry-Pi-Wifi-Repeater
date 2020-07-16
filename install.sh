@@ -1,4 +1,15 @@
 #!/bin/bash
+w_if="$(iw dev | grep Interface | awk '{print $2}' | cut -d/ -f1)"
+if [ -z  "${w_if}" ] ; then
+    echo "Not found wireless interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
+    exit
+fi
+e_if="$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2}')"
+if [ -z  "${e_if}" ] ; then
+    echo "Not found ethernet interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
+    exit
+fi
+
 #1. Install the necessary software------------------------------
 sudo apt-get update -y
 sudo apt-get install hostapd udhcpd -y
@@ -9,11 +20,11 @@ sudo apt-get update -y
 x=tem.tem
 touch $x
 sudo rm -rf /etc/default/udhcpd
-sudo mkdir /etc/default
+[ ! -d /etc/default ] && sudo mkdir /etc/default
 sudo touch /etc/default/udhcpd
 echo "start 10.0.0.2 " >>   $x
 echo "end 10.0.0.254" >> $x
-echo "interface wlan0" >> $x
+echo "interface ${w_if}" >> $x
 echo "remaining yes" >> $x
 echo "opt dns 8.8.8.8 4.2.2.2" >> $x
 echo "opt subnet 255.255.255.0" >> $x
@@ -30,23 +41,25 @@ echo "DHCPD_OPTS=\"-S\"" >> $x
 sudo mv $x  /etc/default/udhcpd
 
 #Config /etc/wpa_supplicant/wpa_supplicant.conf
-touch $x
-sudo rm -rf /etc/wpa_supplicant/wpa_supplicant.conf
-sudo mkdir /etc/wpa_supplicant
-sudo touch /etc/wpa_supplicant/wpa_supplicant.conf
-echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" >> $x
-echo "update_config=1" >> $x
-echo "country=US" >> $x
-echo "network={" >> $x
-echo "        ssid=\"thanhle\"" >> $x
-echo "        psk=\"thanhle12345\"" >> $x
-echo "        key_mgmt=WPA-PSK" >> $x
-echo "}" >> $x
-sudo mv $x /etc/wpa_supplicant/wpa_supplicant.conf
+if [ ! -f /etc/wpa_supplicant/wpa_supplicant.conf ] ; then
+    touch $x
+    sudo rm -rf
+    [ ! -d /etc/wpa_supplicant ] && sudo mkdir /etc/wpa_supplicant
+    sudo touch /etc/wpa_supplicant/wpa_supplicant.conf
+    echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" >> $x
+    echo "update_config=1" >> $x
+    echo "country=US" >> $x
+    echo "network={" >> $x
+    echo "        ssid=\"thanhle\"" >> $x
+    echo "        psk=\"thanhle12345\"" >> $x
+    echo "        key_mgmt=WPA-PSK" >> $x
+    echo "}" >> $x
+    sudo mv $x /etc/wpa_supplicant/wpa_supplicant.conf
+fi
 
 #3. Configure HostAPD------------------------------------------------
 touch $x
-echo "interface=wlan0" >> $x
+echo "interface=${w_if}" >> $x
 echo "driver=nl80211" >> $x
 echo "ssid=My_AP" >> $x
 echo "hw_mode=g" >> $x
@@ -69,9 +82,9 @@ touch $x
 sudo sed -i "/net.ipv4.ip_forward=/d" /etc/sysctl.conf
 sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 sudo sh -c "echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf"
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o ${e_if} -j MASQUERADE
+sudo iptables -A FORWARD -i ${e_if} -o ${w_if} -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i ${w_if} -o ${e_if} -j ACCEPT
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 
 sudo cp ap.sh /usr/bin/ap
