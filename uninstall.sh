@@ -16,4 +16,4 @@ sudo service dhcpcd start
 sudo update-rc.d hostapd disable
 sudo update-rc.d udhcpd disable
 sudo update-rc.d dhcpcd enable
-sudo apt-get purge hostapd udhcpd iptables -y
+sudo apt-get purge hostapd udhcpd -y
