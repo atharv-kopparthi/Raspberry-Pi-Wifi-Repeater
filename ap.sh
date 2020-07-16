@@ -1,4 +1,14 @@
 #! /bin/bash
+w_if="$(iw dev | grep Interface | awk '{print $2}' | cut -d/ -f1)"
+if [ -z  "${w_if}" ] ; then
+    echo "Not found wireless interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
+    exit
+fi
+e_if="$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2}')"
+if [ -z  "${e_if}" ] ; then
+    echo "Not found ethernet interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
+    exit
+fi
 if [ -z "$1" ]
 then
   echo "No Input Name, select default name:ThanhLe_handsome"
@@ -28,12 +38,12 @@ sudo service dhcpcd stop
 
 sudo killall -9 udhcpd
 
-sudo ip addr flush dev wlan0
-sudo ifdown wlan0
-sudo ifconfig wlan0 down
-sudo ifconfig wlan0 up
+sudo ip addr flush dev ${w_if}
+sudo ifdown ${w_if}
+sudo ifconfig ${w_if} down
+sudo ifconfig ${w_if} up
 
-sudo ifconfig wlan0 10.0.0.1 netmask 255.255.255.0
+sudo ifconfig ${w_if} 10.0.0.1 netmask 255.255.255.0
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
 sudo service hostapd start
@@ -45,9 +55,9 @@ sudo iptables -F FORWARD
 sudo sed -i "/net.ipv4.ip_forward=/d" /etc/sysctl.conf
 sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 sudo sh -c "echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf"
-sudo iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+sudo iptables -t nat -I POSTROUTING -o ${e_if} -j MASQUERADE
+sudo iptables -A FORWARD -i ${e_if}  -o ${w_if} -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i ${w_if} -o ${e_if}  -j ACCEPT
 
 sudo update-rc.d hostapd enable
 sudo update-rc.d udhcpd enable

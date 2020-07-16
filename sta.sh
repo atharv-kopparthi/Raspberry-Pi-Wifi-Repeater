@@ -1,5 +1,10 @@
-#! /bin/bash
-WLAN_IF="interface wlan0"
+#!/bin/bash
+w_if="$(iw dev | grep Interface | awk '{print $2}' | cut -d/ -f1)"
+if [ -z  "${w_if}" ] ; then
+    echo "Not found wireless interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
+    exit
+fi
+WLAN_IF="interface ${w_if}"
 WLAN_IP="static ip_address=10.0.0.1"
 if [ -z "$1" ] && [ -z "$2" ]
 # No ssid, no pass
@@ -37,10 +42,10 @@ sudo service dhcpcd stop
 sudo killall -9 wpa_supplicant
 sudo killall -9 udhcpd
 
-sudo ifconfig wlan0 up
-sudo ip addr flush dev wlan0
+sudo ifconfig ${w_if} up
+sudo ip addr flush dev ${w_if}
 sudo service wpa_supplicant restart
-sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlan0 &
+sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant.conf -i ${w_if} &
 sudo service dhcpcd start
 
 sudo update-rc.d hostapd disable
