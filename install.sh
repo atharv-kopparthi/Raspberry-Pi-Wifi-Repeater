@@ -4,7 +4,7 @@ if [ -z  "${w_if}" ] ; then
     echo "Not found wireless interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
     exit
 fi
-e_if="$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2}')"
+e_if="$(ip link | grep eth | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2}')"
 if [ -z  "${e_if}" ] ; then
     echo "Not found ethernet interface in $(uname -a | awk '{print $2}' | cut -d/ -f1)"
     exit
