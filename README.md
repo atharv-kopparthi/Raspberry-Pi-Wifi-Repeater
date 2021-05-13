@@ -1,5 +1,5 @@
 Originally forked from quangthanh010290/RPI3_HOTSPOTS
- **I have made modifications to the code and some important changes to the README.md the rest is not by me**
+ **I have made modifications to the code to eventually allow 5ghz on RPI4 and some important changes to the README.md the rest is not by me**
  **I don't take credit of the main code**
  **EVERYONE IS FREE TO CLONE THIS REPOSITORY,DO WHATEVER YOU WANT**
 
