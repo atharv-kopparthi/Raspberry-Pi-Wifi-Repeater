@@ -1,5 +1,5 @@
 
-# RPI3_HOTSPOTS
+# Raspberry Pi Wifi Repeater
 Features:
  - Tested on Raspbian Jessy, Stretch
  - Can install while wlan0 is connected to network.
@@ -7,7 +7,14 @@ Features:
  - can share internet between eth0 and wlan0, can be config to share with wlan1 or ...
  
 Introduction:
-- This tutorial will guide you steps to setup the Wifi module of raspberry pi 3 or 4 work with Station and Access Point mode, you can easily switch between station mode and AP mode.
+- This guide will help you use your RPI as a wifi repeater!
+ 
+ **IMPORTANT NOTICE**
+ You must have a Raspberry Pi 3,4 to complete this project!
+ You can use other models but you will need a wifi dongle!
+ The setup for the dongle will not be included!
+ ****
+ 
 Setup:
 ```bash
 git clone https://github.com/atharv-kopparthi/Raspberry-Pi-Wifi-Repeater.git
