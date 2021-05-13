@@ -1,7 +1,7 @@
 Originally forked from quangthanh010290/RPI3_HOTSPOTS
  **I have made slight modifications to the code and some important changes to the README.md the rest is not by me**
  **I don't take credit of the main code**
- **EVERYONE IS FREE TO CLONE THIS REPOSITORY,DO WHATEVER BUT DON'T SUE ME**
+ **EVERYONE IS FREE TO CLONE THIS REPOSITORY,DO WHATEVER YOU WANT**
 
 # Raspberry Pi Wifi Repeater
 Features:
