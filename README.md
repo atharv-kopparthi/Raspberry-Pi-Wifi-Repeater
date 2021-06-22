@@ -49,4 +49,5 @@ Bugs:
 - station mode somtime need to run more than 1 time or need to be restart the board.
 - work with 2.4GHz wifi(RPI3 not support 5GHz wifi)
 - Still trying to get 5ghz on RPI4 
+- UPDATE(5ghz still not finding a way yet)
 
